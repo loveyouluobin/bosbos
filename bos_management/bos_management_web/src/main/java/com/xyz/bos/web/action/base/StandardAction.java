@@ -25,9 +25,6 @@ import com.xyz.bos.service.base.StandardService;
 import com.xyz.bos.web.action.CommonAction;
 
 import net.sf.json.JSONArray;
-
-
-	
 	@Namespace("/") // 等价于struts.xml文件中package节点namespace属性
 	@ParentPackage("struts-default") // 等价于struts.xml文件中package节点extends属性
 	@Controller // spring 的注解,控制层代码
@@ -57,15 +54,8 @@ import net.sf.json.JSONArray;
 	    // AJAX请求不需要跳转页面
 	    @Action(value = "standardAction_pageQuery")
 	    public String pageQuery() throws IOException {
-
-	        // EasyUI的页码是从1开始的
-	        // SPringDataJPA的页码是从0开始的
-	        // 所以要-1
-
 	        Pageable pageable = new PageRequest(page - 1, rows);
-
 	        Page<Standard> page = standardService.findAll(pageable);
-
 	        page2json(page, null);
 	        return NONE;
 	    }
