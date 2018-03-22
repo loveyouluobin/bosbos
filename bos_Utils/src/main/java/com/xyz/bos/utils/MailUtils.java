@@ -13,15 +13,16 @@ import javax.mail.internet.MimeMessage.RecipientType;
 
 public class MailUtils {
     // 发件服务器地址.例如 localhost
-    public static final String SMTP_HOST_ADDRESS = "localhost";
+    public static final String SMTP_HOST_ADDRESS = "127.0.0.1";
     // 发件人邮箱的用户名.例如 username
-    public static final String USERNAME = "service";
+    public static final String USERNAME = "aa";
     // 发件人邮箱的密码.例如 password
-    public static final String PASSWORD = "123";
+    public static final String PASSWORD = "aa";
     // 发件人邮箱地址.例如 zhangsan@qq.com
-    public static final String SENDER = "service@store.com";
+    public static final String SENDER = "aa@store.com";
 
     /**
+     * sendMail静态方法 调用时参数:
      * @param receiver : 收件人邮箱地址.例如 lisi@qq.com
      * @param subject : 收件主题
      * @param emailBody : 邮件内容

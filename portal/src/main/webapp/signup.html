@@ -17,34 +17,7 @@
 	    <script  type="text/javascript" src="js/html5.js"></script>
 	    <script  type="text/javascript" src="js/respond.min.js"></script>
 	    <![endif]-->
-
-<style type="text/css">
-var clock = '';//声明 时钟
-var nums = 60;//时长默认60秒
-var btn;//声明this的节点
-function sendCode(thisBtn) {//sendCode方法
-var telephone = $("#telephone").val();//获得输入的手机号的值
-var reg = new RegExp("^1[3456789]\\d{9}$");//正则规则
-if (reg.test(telephone)) {//如果可以匹配 test
-//就发送请求发送请求
-$.post("customerAction_sendSMS.action","telephone="+ telephone);
-btn = thisBtn;//这具input节点参数赋给btn
-btn.disabled = true; //将按钮置为不可点击
-btn.value = nums + '秒后重新获取';//并将节按钮上的值设为nums计时+""拼接的文字
-clock = setInterval(doLoop,1000); //并执行定时器setInterval 一秒执行一次doLoop方法
-} else {//不匹配就弹出信息
-alert("您输入的不是一个手机号")
-}}
-function doLoop() {//doLoop方法
-nums--;//执行一次减一
-if (nums > 0) {//当设定的值还大于0时就把值设为
-btn.value = nums + '秒后重新获取';
-} else {//不等于0时
-clearInterval(clock); //就清除js定时器
-btn.disabled = false;//按钮可用
-btn.value = '重新获取验证码';//按钮后面文件显示文字 
-nums = 60; //再重置时间
-}}
+<style>
 </style>
 </head>
 <body>
@@ -79,44 +52,33 @@ nums = 60; //再重置时间
 								<div class="controls">
 									<input type="text" value="" name="checkcode" class="fn-tinput"
 										placeholder="请输入验证码" required /> <input type="button"
-										onclick="sendCode(this)" class="btn btn-default" onclick="sendCode(this)" value="获取验证码">
+										onclick="sendCode(this)" class="btn btn-default" value="获取验证码"><!-- 绑定单击事件并到js方法sendCode(this) -->
 									<script type="text/javascript">
-										var clock = '';
-										var nums = 60;
-										var btn;
-										function sendCode(thisBtn) {
-											// 校验手机号
-											var telephone = $("#telephone")
-													.val();
-											// 1[3456789]\d{9}
-											var reg = new RegExp(
-													"^1[3456789]\\d{9}$");
-
-											if (reg.test(telephone)) {
-												//发送短信
-												$.post("customerAction_sendSMS.action",
-																"telephone="
-																		+ telephone);
-
-												btn = thisBtn;
+										var clock = '';//定时器变量
+										var nums = 60;//声明时间
+										var btn;//声明btn变量用来装 获得验证码按钮节点
+										function sendCode(thisBtn) {// 校验手机号方法 sendCode
+											var telephone = $("#telephone").val();//获得输入的手机号
+											var reg = new RegExp("^1[3456789]\\d{9}$");//手机号正则表达式
+											if (reg.test(telephone)) {//如果能匹配就发送短信
+												$.post("customerAction_sendSMS.action","telephone="+telephone);
+												btn = thisBtn;//把传过来的thisBthn按钮节点标签赋给btn
 												btn.disabled = true; //将按钮置为不可点击
-												btn.value = nums + '秒后重新获取';
-												clock = setInterval(doLoop,
-														1000); //一秒执行一次 
-											} else {
-												alert("请检查您输入的手机号")
+												btn.value = nums + '秒后重新获取';//并在按钮上显示字
+												clock = setInterval(doLoop,1000);//定时一秒执行doLoop方法一次
+											} else {//不匹配弹出提示
+												alert("请确定你输入的是11位手机号")
 											}
-
 										}
-										function doLoop() {
-											nums--;
-											if (nums > 0) {
+										function doLoop() {//doLoop方法
+											nums--;//执行一次时间减一
+											if (nums > 0) {//只要大于0就
 												btn.value = nums + '秒后重新获取';
-											} else {
+											} else {//等于0的时候
 												clearInterval(clock); //清除js定时器
-												btn.disabled = false;
-												btn.value = '重新获取验证码';
-												nums = 60; //重置时间
+												btn.disabled = false;//设置按钮可用
+												btn.value = '重新获取验证码';//显示字
+												nums = 60; //并重置时间
 											}
 										}
 									</script>
@@ -148,18 +110,13 @@ nums = 60; //再重置时间
 							<li class="bl-form-group bl-form-btns"><label
 								class="fn-vhid">提交：</label>
 								<div class="controls">
-									<a id="checkbtn"
-										class="btn btn-danger btn-submit submitBtn col-md-3"
-										type="submit">注册</a>
+									<a id="checkbtn"class="btn btn-danger btn-submit submitBtn col-md-3" type="submit">注册</a><!-- id=checkbtn -->
 									<script type="text/javascript">
-										$(function() {
+										$(function() {//校验#jsForm表单 都填了通过就提交 
 											$("#checkbtn").click(
 													function() {
-														if ($('#jsForm')
-																.validate()
-																.form()) {
-															$('#jsForm')[0]
-																	.submit();
+														if ($('#jsForm').validate()																.form()) {
+															$('#jsForm')[0].submit();
 														}
 													});
 										});

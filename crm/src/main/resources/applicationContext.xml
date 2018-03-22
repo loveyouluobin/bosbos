@@ -7,41 +7,32 @@
 	xmlns:jaxws="http://cxf.apache.org/jaxws" xmlns:soap="http://cxf.apache.org/bindings/soap"
 	xmlns:jaxrs="http://cxf.apache.org/jaxrs"
 	xsi:schemaLocation="
-						http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-						http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
-						http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
-						http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
-						http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
-						http://www.springframework.org/schema/data/jpa 
-						http://www.springframework.org/schema/data/jpa/spring-jpa.xsd
-						  http://cxf.apache.org/bindings/soap 
+                 http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                 http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+                 http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+                 http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
+                 http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+                 http://www.springframework.org/schema/data/jpa 
+                 http://www.springframework.org/schema/data/jpa/spring-jpa.xsd
+                   http://cxf.apache.org/bindings/soap 
               http://cxf.apache.org/schemas/configuration/soap.xsd
               http://cxf.apache.org/jaxws 
               http://cxf.apache.org/schemas/jaxws.xsd
                  http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd 
-						">
+                 ">
 
 	<!--
 		#########################################################
 		指定连接池配置
 		#########################################################
 	-->
-	<!-- oracle用C3p0连接池	 -->	
 	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
 		<property name="driverClass" value="oracle.jdbc.driver.OracleDriver" />
 		<property name="jdbcUrl" value="jdbc:oracle:thin:@PC5268-20140727:1521:ORCL" />
+		<!-- **********************修改用户名和密码************************ -->
 		<property name="user" value="CRM" />
 		<property name="password" value="crm" />
 	</bean>
-	
-				<!-- mysql用C3p0连接池	 -->	
-	<!-- <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
-		<property name="driverClass" value="com.mysql.jdbc.Driver" />
-		<property name="jdbcUrl" value="jdbc:mysql://localhost:3306/crm" />
-		<property name="user" value="root" />
-		<property name="password" value="root" />
-	</bean> -->
-	
 	<!-- spring整合JPA -->
 	<bean id="entityManagerFactory"
 		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
@@ -58,23 +49,13 @@
 			<bean class="org.hibernate.ejb.HibernatePersistence" />
 		</property>
 		<property name="jpaVendorAdapter">
-		
-				<!-- oracle自动建表 -->
 			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+				<!-- 自动建表 -->
 				<property name="generateDdl" value="true" />
 				<property name="database" value="ORACLE" />
 				<property name="databasePlatform" value="org.hibernate.dialect.Oracle10gDialect" />
 				<property name="showSql" value="true" />
 			</bean>
-			
-			 <!-- mysql自动建表 -->
-			<!-- <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
-				<property name="generateDdl" value="true" />
-				<property name="database" value="MYSQL" />
-				<property name="databasePlatform" value="org.hibernate.dialect.MySQLDialect" />
-				<property name="showSql" value="true" />
-			</bean> -->
-			
 		</property>
 		<property name="jpaDialect">
 			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaDialect" />
@@ -95,7 +76,7 @@
 	<!-- **********************修改包名************************ -->
 	<context:component-scan base-package="com.xyz.crm.service" />
 
-	<!-- 配置注解 事务 -->
+	<!-- 配置注解事务 -->
 	<tx:annotation-driven transaction-manager="transactionManager" />
 	<!--
 		#########################################################
@@ -104,12 +85,15 @@
 	-->
 	<!-- **********************修改包名************************ -->
 	<jpa:repositories base-package="com.xyz.crm.dao" />
-	
+
 	<!-- 发布webService -->
 	<jaxrs:server address="/customerService">
+
 		<jaxrs:serviceBeans>
 			<ref bean="customerServiceImpl" />
 		</jaxrs:serviceBeans>
+
+
 		<jaxrs:inInterceptors>
 			<bean class="org.apache.cxf.interceptor.LoggingInInterceptor"></bean>
 		</jaxrs:inInterceptors>

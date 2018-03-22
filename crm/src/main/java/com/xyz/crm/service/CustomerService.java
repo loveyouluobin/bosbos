@@ -2,6 +2,7 @@ package com.xyz.crm.service;
 import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -15,6 +16,10 @@ public interface CustomerService {
     @GET
     @Path("/findAll")
     List<Customer> findAll();
+ // 注册用户接口
+    @POST//增 @DELETE删 @PUT 改@GET查
+    @Path("/save")//访问路径
+    void save(Customer customer);//接口方法和参数
 
     // 查询未关联定区的客户
     @GET
