@@ -31,15 +31,13 @@ import net.sf.json.JsonConfig;
 @Controller // spring 的注解,控制层代码
 @Scope("prototype") // spring 的注解,多例
 public class SubAreaAction extends CommonAction<SubArea> {
-
     public SubAreaAction() {
         super(SubArea.class);
     }
 
     @Autowired
     private SubAreaService subAreaService;
-
-    @Action(value = "subareaAction_save", results = {@Result(name = "success",
+    @Action(value = "subAreaAction_save", results = {@Result(name = "success",
             location = "/pages/base/sub_area.html", type = "redirect")})
     public String save() {
         subAreaService.save(getModel());
@@ -48,18 +46,10 @@ public class SubAreaAction extends CommonAction<SubArea> {
 
     @Action(value = "subAction_pageQuery")
     public String pageQuery() throws IOException {
-
-        // EasyUI的页码是从1开始的
-        // SPringDataJPA的页码是从0开始的
-        // 所以要-1
-
         Pageable pageable = new PageRequest(page - 1, rows);
-
         Page<SubArea> page = subAreaService.findAll(pageable);
-
         JsonConfig jsonConfig = new JsonConfig();
         jsonConfig.setExcludes(new String[] {"subareas"});
-
         page2json(page, jsonConfig);
         return NONE;
     }

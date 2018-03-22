@@ -27,9 +27,16 @@
 		$('#addWindow').window("open");
 	}
 
-	function doEdit() {
-		alert("修改...");
+	function doEdit(){
+	    var result=$("#grid").datagrid("getSelections");
+	    if (result.length==1) {
+	    $("#addWindow").window("open");
+	    $("#courierForm").form("load",result[0]);
+	    } else {
+	    $.messager.alert("温馨提示您","必须选也只能选 一个","info");
+	    }
 	}
+
 
 	function doDelete() {
 
@@ -269,6 +276,8 @@
 				<table class="table-edit" width="80%" align="center">
 					<tr class="title">
 						<td colspan="4">收派员信息</td>
+						 <input type="hidden" name="id" />  <!--提供隐藏域 装载id --> 
+						
 					</tr>
 					<tr>
 						<td>快递员工号</td>
