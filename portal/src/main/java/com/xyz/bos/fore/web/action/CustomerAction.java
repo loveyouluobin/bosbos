@@ -66,7 +66,7 @@ private Customer model=new Customer();//模型驱动Customer客户实体
             String activeCode = RandomStringUtils.randomNumeric(30);//生成邮箱验证码
             redisTemplate.opsForValue().set(model.getTelephone(), activeCode, 1,TimeUnit.DAYS);//存到redis 有效期一天
 String emailBody = 
-"感谢您注册本网站的帐号，请在24小时之内点击<a href='http://localhost:8280/portal/customerAction_active.action?activeCode="+ activeCode + "&telephone=" + model.getTelephone()+ "'>本链接</a>激活您的帐号";
+"感谢您注册本网站的帐号，请在24小时之内点击<a href='http://localhost:8083/portal/customerAction_active.action?activeCode="+ activeCode + "&telephone=" + model.getTelephone()+ "'>本链接</a>激活您的帐号";
 			MailUtils.sendMail(model.getEmail(), "请激活您的帐号", emailBody);//发送邮件
             return SUCCESS;//成功就返回SUCCESS
         }
@@ -87,7 +87,7 @@ String emailBody =
   String serverCode =redisTemplate.opsForValue().get(model.getTelephone());//从redis拿到name为手机号的随机数
         if (StringUtils.isNotEmpty(serverCode)&& StringUtils.isNotEmpty(activeCode)&& serverCode.equals(activeCode)) {//如果激活码和存在redis一样
          WebClient.create(//就调激活的方法accept
-                    "http://http://localhost:8082/crm/webService/customerService/active")
+                    "http://localhost:8082/crm/webservice/customerService/active")
                     .type(MediaType.APPLICATION_JSON)
                     .query("telephone", model.getTelephone())
                     .accept(MediaType.APPLICATION_JSON).put(null);
@@ -96,6 +96,41 @@ String emailBody =
         return ERROR;
     }
     
+@Action(value = "customerAction_login",results = {//登陆方法
+@Result(name = "success", location = "/index.html",type = "redirect"),
+@Result(name = "error", location = "/login.html",type = "redirect"),
+@Result(name = "unactived", location = "/login.html",type = "redirect")})
+    public String login() {
+   String serverCode = (String) ServletActionContext.getRequest().getSession().getAttribute("validateCode");//拿到session
+if (StringUtils.isNotEmpty(serverCode)&& StringUtils.isNotEmpty(checkcode)&& serverCode.equals(checkcode)) {//session里验证码和登陆页面属性驱动activeCode获得的一致
+  Customer customer = WebClient.create(// 校验用户是否激活 发查询请求
+        "http://localhost:8082/crm/webservice/customerService/isActived")
+        .type(MediaType.APPLICATION_JSON)
+        .query("telephone", model.getTelephone())
+        .accept(MediaType.APPLICATION_JSON).get(Customer.class);
+if (customer != null && customer.getType() != null) {//对象不为空 对象的删除状态也不为空
+    if (customer.getType() == 1) {// 这个用户对象的 type==1就是激活了
+        Customer c = WebClient.create(// 就请求登录
+        "http://localhost:8082/crm/webservice/customerService/login")
+        .type(MediaType.APPLICATION_JSON)
+        .query("telephone", model.getTelephone())
+        .query("password", model.getPassword())
+        .accept(MediaType.APPLICATION_JSON)
+        .get(Customer.class);
+        if (c != null) {//请求的用户对象不为空 就把对象存到session
+       ServletActionContext.getRequest().getSession().setAttribute("user", c);
+            return SUCCESS;//成功
+        } else {
+          return ERROR;//失败
+        }
+    } else {// 用户已经注册成功，但是没有激活
+        return "unactived";
+      }
+   }
+ }
+    return ERROR;
+}
+
    
 	
 }

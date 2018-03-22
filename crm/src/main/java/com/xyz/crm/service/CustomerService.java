@@ -17,20 +17,32 @@ public interface CustomerService {
     @Path("/findAll")
     List<Customer> findAll();
  // 注册用户接口
-    @POST//增 @DELETE删 @PUT 改@GET查
+    @POST//@POST增 @DELETE删 @PUT 改@GET查
     @Path("/save")//访问路径
     void save(Customer customer);//接口方法和参数
-
-    // 查询未关联定区的客户
+    // 改type为0为删除标识
+    @PUT// @POST增 @DELETE删 @PUT改 @GET查
+    @Path("/active")//访问路径
+    void active(@QueryParam("telephone")String telephone);//接口方法和参数
+ // 检查用户是否激活
     @GET
-    @Path("/findCustomersUnAssociated")
-    List<Customer> findCustomersUnAssociated();
+    @Path("/isActived")
+    Customer isActived(@QueryParam("telephone") String telephone);
+
+    // 登录
+    @GET
+    @Path("/login")
+    Customer login(@QueryParam("telephone") String telephone,@QueryParam("password") String password);
+    
+    // 查询未关联定区的客户 的接口    
+    @GET//@POST增 @DELETE删 @PUT改 @GET查
+    @Path("/findCustomersUnAssociated")//访问地址
+    List<Customer> findCustomersUnAssociated();//返回的是个list
 
     // 查询已关联到指定定区的客户
     @GET
     @Path("/findCustomersAssociated2FixedArea")
-    List<Customer> findCustomersAssociated2FixedArea(
-            @QueryParam("fixedAreaId") String fixedAreaId);
+    List<Customer> findCustomersAssociated2FixedArea(@QueryParam("fixedAreaId") String fixedAreaId);
 
     // 定区ID,要关联的数据
     // 根据定区ID,把关联到这个定区的所有客户全部解绑

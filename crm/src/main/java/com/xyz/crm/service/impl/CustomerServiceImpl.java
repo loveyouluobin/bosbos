@@ -24,14 +24,12 @@ public class CustomerServiceImpl implements CustomerService {
     // 查询未关联定区的客户
     @Override
     public List<Customer> findCustomersUnAssociated() {
-
         return customerRepository.findByFixedAreaIdIsNull();
     }
 
     // 查询已关联到指定定区的客户
     @Override
-    public List<Customer> findCustomersAssociated2FixedArea(
-            String fixedAreaId) {
+    public List<Customer> findCustomersAssociated2FixedArea(String fixedAreaId) {
         return customerRepository.findByFixedAreaId(fixedAreaId);
     }
 
@@ -57,4 +55,22 @@ public class CustomerServiceImpl implements CustomerService {
 	public void save(Customer customer) {
 		customerRepository.save(customer);
 	}
+
+	@Override
+	public void active(String telephone) {
+		customerRepository.active(telephone);
+	}
+
+    @Override
+    public Customer isActived(String telephone) {
+
+        return customerRepository.findByTelephone(telephone);
+    }
+
+    @Override
+    public Customer login(String telephone, String password) {
+
+        return customerRepository.findByTelephoneAndPassword(telephone,
+                password);
+    }
 }
