@@ -154,41 +154,30 @@ public class CourierAction extends CommonAction<Courier> {
     }
 
     @Action("courierAction_listajax")
-    public String listajax() throws IOException {
-        // 查询所有的在职的快递员
-
-        Specification<Courier> specification = new Specification<Courier>() {
-
-            @Override
-            public Predicate toPredicate(Root<Courier> root,
-                    CriteriaQuery<?> query, CriteriaBuilder cb) {
-                // 比较空值
-                Predicate predicate =
-                        cb.isNull(root.get("deltag").as(Character.class));
-
-                return predicate;
-            }
+    public String listajax() throws IOException {// 查询所有的在职的快递员
+        Specification<Courier> specification = new Specification<Courier>() {//new Specification条件查询
+            @Override//比较是空值的固定方法
+            public Predicate toPredicate(Root<Courier> root,CriteriaQuery<?> query, CriteriaBuilder cb) {
+                Predicate predicate =cb.isNull(root.get("deltag").as(Character.class));//这个deltag字段是null 就没作废
+                return predicate;            }
         };
-        Page<Courier> p = courierService.findAll(specification, null);
-        List<Courier> list = p.getContent();
-
-        JsonConfig jsonConfig = new JsonConfig();
+        Page<Courier> p = courierService.findAll(specification, null);//加入到finAll查询集合不需要分页
+        List<Courier> list = p.getContent();//得到查询的list集合
+        JsonConfig jsonConfig = new JsonConfig();//排除对象
         jsonConfig.setExcludes(new String[] {"fixedAreas", "takeTime"});
-        list2json(list, jsonConfig);
+        list2json(list, jsonConfig);//转json
         return NONE;
     }
 
-    @Action("courierAction_listajax2")
+    @Action("courierAction_listajax2")// 查询所有的在职的快递员
     public String listajax2() throws IOException {
-        // 查询所有的在职的快递员
-
         List<Courier> list = courierService.findAvaible();
-
         JsonConfig jsonConfig = new JsonConfig();
         jsonConfig.setExcludes(new String[] {"fixedAreas", "takeTime"});
         list2json(list, jsonConfig);
         return NONE;
     }
+
 
 
 }

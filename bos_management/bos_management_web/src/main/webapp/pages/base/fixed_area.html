@@ -40,7 +40,6 @@
 
 	//关联分区
 	function doAssociations() {
-
 		var rows = $("#grid").datagrid("getSelections")
 		if (rows.length == 1) {
 			//打开窗口
@@ -462,31 +461,28 @@
 		minimizable="false" maximizable="false"
 		style="top: 20px; left: 200px; width: 400px; height: 300px;">
 		<div style="overflow: auto; padding: 5px;" border="false">
-			<form id="customerForm"
-				action="../../fixedAreaAction_assignCustomers2FixedArea.action"
-				method="post">
-				<table class="table-edit" width="80%" align="center">
+			<form id="customerForm" action="../../fixedAreaAction_assignCustomers2FixedArea.action"method="post">
+				<table class="table-edit" width="80%" align="center"><!-- 关联客户弹出窗口是个表单 中间是三行三列的表格 -->
 					<tr class="title">
 						<td colspan="3">关联客户</td>
 					</tr>
 					<tr>
-						<td><input type="hidden" name="id" id="customerFixedAreaId" />
-							<!-- size: 指定一次可以显示多少条数据  --> <!-- multiple: 可以选择多条数据--> <select
-							id="noassociationSelect" multiple="multiple" size="10">
-
-
-						</select></td>
-						<td><input type="button" value="》》" id="toRight"
-							onclick="moveCustomer2Right()"> <br /> <input
-							type="button" value="《《" id="toLeft"
-							onclick="moveCustomer2Left()"></td>
-						<td><select id="associationSelect" name="customerIds"
-							multiple="multiple" size="10"></select></td>
+						<td>
+							<input type="hidden" name="id" id="customerFixedAreaId" /><!-- 隐藏id的输入 -->
+							 <select id="noassociationSelect" multiple="multiple" size="15"></select><!-- 下拉框multiple="multiple"下拉不收缩并可选多条 size: 指定一次可以显示多少条数据  --> 
+						</td>
+						<td><!-- 两个按钮添加点击事件 -->
+							<input type="button" value="》》" id="toRight"onclick="moveCustomer2Right()"> <br /> 
+							<input type="button" value="《《" id="toLeft" onclick="moveCustomer2Left()">
+						</td>
+						<td>
+							<select id="associationSelect" name="customerIds"multiple="multiple" size="15"></select><!-- multiple="multiple"下拉框不收缩并可选多条 -->
+						</td>
 					</tr>
 					<tr>
-						<td colspan="3"><a id="associationBtn" href="#"
-							onclick="associateCustomer2FixedArea()" class="easyui-linkbutton"
-							data-options="iconCls:'icon-save'">关联客户</a></td>
+						<td colspan="3">
+							<a id="associationBtn" href="#" onclick="associateCustomer2FixedArea()" class="easyui-linkbutton" data-options="iconCls:'icon-save'">关联客户</a>
+						</td>
 					</tr>
 				</table>
 			</form>
@@ -494,25 +490,16 @@
 	</div>
 
 	<script type="text/javascript">
-		function moveCustomer2Right() {
-			$("#associationSelect").append(
-					$("#noassociationSelect option:selected"))
-		}
-		function moveCustomer2Left() {
-			$("#noassociationSelect").append(
-					$("#associationSelect option:selected"))
-		}
+		function moveCustomer2Right() {//#associationSelect的下拉框 增加#noassociationSelect下拉框节点被option:选中的数据
+			$("#associationSelect").append($("#noassociationSelect option:selected"))}
+		function moveCustomer2Left() {//从右往左往 也一样
+			$("#noassociationSelect").append($("#associationSelect option:selected"))}
+		
 		function associateCustomer2FixedArea() {
-
-			var rows = $("#grid").datagrid("getSelections");
-
-			$("#customerFixedAreaId").val(rows[0].id)
-			// 选中右侧的下拉框中所有的数据
-
-			$("#associationSelect option").attr("selected", "selected")
-
-			// 提交表单
-			$("#customerForm").submit();
+		var rows = $("#grid").datagrid("getSelections");//得到选中的数组rows
+		$("#customerFixedAreaId").val(rows[0].id)//给选中要关联客户的这一条定区隐藏域的id value值 赋值rows选 中数组第0个元素的id
+		$("#associationSelect option").attr("selected", "selected")//右边要提交的<option>下拉项节点 属性全设置为选中状态
+		$("#customerForm").submit();// #customerForm表单执行提交submit方法
 		}
 	</script>
 
@@ -523,29 +510,26 @@
 		minimizable="false" maximizable="false"
 		style="top: 20px; left: 200px; width: 400px; height: 300px;">
 		<div style="overflow: auto; padding: 5px;" border="false">
-			<form id="subAreaForm"
-				action="../../fixedAreaAction_assignSubAreas2FixedArea.action"
-				method="post">
+			<form id="subAreaForm" action="../../fixedAreaAction_assignSubAreas2FixedArea.action" method="post">
 				<table class="table-edit" width="80%" align="center">
 					<tr class="title">
 						<td colspan="3">关联分区</td>
 					</tr>
 					<tr>
 						<td><input type="hidden" name="id" id="subAreaFixedAreaId" />
-							<!-- size: 指定一次可以显示多少条数据  --> <!-- multiple: 可以选择多条数据--> <select
-							id="noassociationSubAreaSelect" multiple="multiple" size="10">
-
-
-						</select></td>
-						<td><input type="button" value="》》" id="toRight"
-							onclick="moveSubArea2Right()"> <br /> <input
-							type="button" value="《《" id="toLeft" onclick="moveSubArea2Left()"></td>
-						<td><select id="associationSubAreaSelect" name="subAreaIds"
-							multiple="multiple" size="10"></select></td>
+							<!-- size: 指定一次可以显示多少条数据  --> <!-- multiple: 可以选择多条数据-->
+						<select id="noassociationSubAreaSelect" multiple="multiple" size="10"></select>
+						</td>
+						<td>
+						<input type="button" value="》》" id="toRight"onclick="moveSubArea2Right()"> <br /> 
+						<input type="button" value="《《" id="toLeft" onclick="moveSubArea2Left()">
+						</td>
+						<td>
+						<select id="associationSubAreaSelect" name="subAreaIds" multiple="multiple" size="10"></select>
+						</td>
 					</tr>
 					<tr>
-						<td colspan="3"><a id="associationBtn" href="#"
-							onclick="associateSubArea2FixedArea()" class="easyui-linkbutton"
+						<td colspan="3"><a id="associationBtn" href="#" onclick="associateSubArea2FixedArea()" class="easyui-linkbutton"
 							data-options="iconCls:'icon-save'">关联分区</a></td>
 					</tr>
 				</table>
@@ -555,25 +539,16 @@
 
 	<script type="text/javascript">
 		function moveSubArea2Right() {
-			$("#associationSubAreaSelect").append(
-					$("#noassociationSubAreaSelect option:selected"))
+			$("#associationSubAreaSelect").append($("#noassociationSubAreaSelect option:selected"))
 		}
-		function moveSubArea2Left() {
-			$("#noassociationSubAreaSelect").append(
-					$("#associationSubAreaSelect option:selected"))
+		function moveSubArea2Left() {$("#noassociationSubAreaSelect").append($("#associationSubAreaSelect option:selected"))
 		}
 		function associateSubArea2FixedArea() {
-
 			// 给定区ID赋值
 			var rows = $("#grid").datagrid("getSelections");
-
 			$("#subAreaFixedAreaId").val(rows[0].id)
-			// 选中右侧的下拉框中所有的数据
-
-			$("#associationSubAreaSelect option").attr("selected", "selected")
-
-			// 提交表单
-			$("#subAreaForm").submit();
+			$("#associationSubAreaSelect option").attr("selected", "selected")// 选中右侧的下拉框中所有的数据
+			$("#subAreaForm").submit();// 提交表单
 		}
 	</script>
 
@@ -583,19 +558,19 @@
 		maximizable="false"
 		style="top: 20px; left: 200px; width: 700px; height: 300px;">
 		<div style="overflow: auto; padding: 5px;" border="false">
-			<form id="courierForm"
-				action="../../fixedAreaAction_associationCourierToFixedArea.action"
-				method="post">
+			<form id="courierForm" action="../../fixedAreaAction_associationCourierToFixedArea.action" method="post">
 				<table class="table-edit" width="80%" align="center">
 					<tr class="title">
-						<td colspan="2">关联快递员</td>
+					<td colspan="2">关联快递员</td>
 					</tr>
 					<tr>
 						<td>选择快递员</td>
 						<td>
 							<!-- 存放定区编号 --> <input type="hidden" name="id"
 							id="courierFixedAreaId" /> <input
-							data-options="ditable:false, url:'../../courierAction_listajax.action',valueField:'id',textField:'name'"
+							data-options="ditable:false, 
+							url:'../../courierAction_listajax.action',
+							valueField:'id',textField:'name'"
 							type="text" name="courierId" class="easyui-combobox"
 							required="true" />
 						</td>
@@ -603,29 +578,25 @@
 					<tr>
 						<td>选择收派时间</td>
 						<td><input
-							data-options="ditable:false, url:'../../takeTimeAction_listajax.action',valueField:'id',textField:'name'"
+							data-options="ditable:false, 
+							url:'../../takeTimeAction_listajax.action',
+							valueField:'id',textField:'name'"
 							type="text" name="takeTimeId" class="easyui-combobox"
 							required="true" /></td>
 					</tr>
 					<tr>
-						<td colspan="3"><a id="associationCourierBtn" href="#"
-							onclick="associateCourier()" class="easyui-linkbutton"
-							data-options="iconCls:'icon-save'">关联快递员</a></td>
+						<td colspan="3"><a id="associationCourierBtn" href="#" onclick="associateCourier()" class="easyui-linkbutton" data-options="iconCls:'icon-save'">关联快递员</a></td>
 					</tr>
 				</table>
 			</form>
 		</div>
 	</div>
 	<script type="text/javascript">
-		// 关联快递员
-		function associateCourier() {
-			if ($("#courierForm").form("validate")) {
-
-				// 给定区ID赋值
-				var rows = $("#grid").datagrid("getSelections");
-				$("#courierFixedAreaId").val(rows[0].id)
-				//提交表单
-				$("#courierForm").submit()
+		function associateCourier() {// 关联快递员
+			if ($("#courierForm").form("validate")) {//如果所有要填的都填好了
+				var rows = $("#grid").datagrid("getSelections");//拿到所有选中的数组
+				$("#courierFixedAreaId").val(rows[0].id)// 给隐藏域定区ID赋值 是选中数组里第0个元素的id
+				$("#courierForm").submit()//提交表单
 			}
 		}
 	</script>

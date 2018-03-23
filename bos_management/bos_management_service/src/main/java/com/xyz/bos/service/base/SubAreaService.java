@@ -20,6 +20,13 @@ public interface SubAreaService {
 
 	void save(SubArea model);
 
+	List<SubArea> findUnAssociatedSubAreas();
+
+	List<SubArea> findAssociatedSubAreas(Long id);
+
+
+
+
   
 }
   

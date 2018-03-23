@@ -3,6 +3,9 @@ package com.xyz.bos.web.action.base;
 import java.io.IOException;
 import java.util.List;
 
+import javax.ws.rs.core.MediaType;
+
+import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -18,6 +21,7 @@ import com.xyz.bos.domain.base.Standard;
 import com.xyz.bos.domain.base.SubArea;
 import com.xyz.bos.service.base.SubAreaService;
 import com.xyz.bos.web.action.CommonAction;
+import com.xyz.crm.domain.Customer;
 
 import net.sf.json.JsonConfig;
 
@@ -37,6 +41,7 @@ public class SubAreaAction extends CommonAction<SubArea> {
 
     @Autowired
     private SubAreaService subAreaService;
+    
     @Action(value = "subAreaAction_save", results = {@Result(name = "success",
             location = "/pages/base/sub_area.html", type = "redirect")})
     public String save() {
@@ -53,4 +58,24 @@ public class SubAreaAction extends CommonAction<SubArea> {
         page2json(page, jsonConfig);
         return NONE;
     }
+    
+    // 向CRM系统发起请求,查询没有关联的分区
+    @Action(value = "subAreaAction_findUnAssociatedSubAreas")
+    public String findUnAssociatedSubAreas() throws IOException {
+    	List<SubArea> list = subAreaService.findUnAssociatedSubAreas();
+    	JsonConfig jsonConfig = new JsonConfig();
+        jsonConfig.setExcludes(new String[] {"subareas"});
+        list2json(list, jsonConfig);
+        return NONE;
+    }
+    // 向CRM系统发起请求,查询已经关联的分区
+    @Action(value = "subAreaAction_findAssociatedSubAreas")
+    public String findAssociatedSubAreas() throws IOException {
+    	List<SubArea> list = subAreaService.findAssociatedSubAreas(getModel().getId());
+    	JsonConfig jsonConfig = new JsonConfig();
+        jsonConfig.setExcludes(new String[] {"subareas","couriers"});
+        list2json(list, jsonConfig);
+        return NONE;
+    }
+    
 }

@@ -64,6 +64,7 @@ private FixedAreaService fixedAreaService;
         list2json(list, null);//list转json
         return NONE;
     }
+
     
     // 向CRM系统发起请求,查询已关联指定定区的客户
     @Action(value = "fixedAreaAction_findAssociatedCustomers")
@@ -78,6 +79,44 @@ private FixedAreaService fixedAreaService;
         list2json(list, null);
         return NONE;
     }
+    
+    
+    private Long[]customerIds;//属性驱动获取要关联定区 的客户id数组
+    public void setCustomerIds(Long[] customerIds) {
+		this.customerIds = customerIds;	}
+    
+    // 向CRM系统发起请求,关联客户
+    @Action(value = "fixedAreaAction_assignCustomers2FixedArea",results={
+			@Result(location="/pages/base/fixed_area.html",name="success",type="redirect")
+	})
+    public String assignCustomers2FixedArea() throws IOException {
+    	WebClient.create(
+    	"http://localhost:8082/crm/webservice/customerService/assignCustomers2FixedArea")
+        .query("fixedAreaId", getModel().getId())//传过去fixedAreaId从模型驱动获得的的id
+        .query("customerIds",customerIds)//传过去属性驱动customerIds数组id
+        .type(MediaType.APPLICATION_JSON)
+        .accept(MediaType.APPLICATION_JSON)
+        .put(null);
+    	return SUCCESS;
+    }
+    
+    private Long courierId;//属性驱动获取前端name=的值 快速员id
+    private Long takeTimeId;//时段id
+    public void setCourierId(Long courierId) {
+		this.courierId = courierId;	}
+    public void setTakeTimeId(Long takeTimeId) {
+		this.takeTimeId = takeTimeId;	}
+    
+    // 关联快递员
+    @Action(value = "fixedAreaAction_associationCourierToFixedArea",results={
+    		@Result(location="/pages/base/fixed_area.html",name="success",type="redirect")
+    })
+    public String associationCourierToFixedArea() throws IOException {
+    	fixedAreaService.associationCourierToFixedArea(getModel().getId(),courierId,takeTimeId);
+    	
+    	return SUCCESS;
+    }
 
+    
 
 }

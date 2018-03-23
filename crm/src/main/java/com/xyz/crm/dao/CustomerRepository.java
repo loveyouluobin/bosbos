@@ -11,14 +11,15 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
 
     // 查询已关联到指定定区的客户
     List<Customer> findByFixedAreaId(String fixedAreaId);
+    
 
-    // 把关联到指定定区的客户进行解绑操作
+    // 把关联到指定定区的客户id 进行解绑操作
     @Query("update Customer set fixedAreaId = null where fixedAreaId = ?")
     @Modifying
     void unbindCustomerByFixedArea(String fixedAreaId);
 
     // 把客户绑定到指定的定区
-    @Query("update Customer set fixedAreaId = ?2 where id = ?1")
+    @Query("update Customer set fixedAreaId = ?2 where id = ?1")//写数字确定顺序
     @Modifying
     void bindCustomer2FixedArea(Long customerId, String fixedAreaId);
     

@@ -47,9 +47,10 @@ public interface CustomerService {
     // 定区ID,要关联的数据
     // 根据定区ID,把关联到这个定区的所有客户全部解绑
     // 要关联的数据和定区Id进行绑定
-    @PUT
+    @PUT//改
     @Path("/assignCustomers2FixedArea")
-    void assignCustomers2FixedArea(
-            @QueryParam("customerIds") Long[] customerIds,
-            @QueryParam("fixedAreaId") String fixedAreaId);
+    void assignCustomers2FixedArea(//传两参数
+	    @QueryParam("customerIds")Long[]customerIds,
+	    @QueryParam("fixedAreaId")String fixedAreaId);
+    
 }

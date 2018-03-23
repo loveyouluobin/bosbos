@@ -41,6 +41,23 @@ public class SubAreaServiceImpl implements SubAreaService {
 	}
 
 
+	@Override// 查询未关联定区的分区
+	public List<SubArea> findUnAssociatedSubAreas() {
+		return subAreaRepository.findByFixedAreaIsNull();
+	}
+
+
+	@Override// 查询关联到指定定区的分区
+	public List<SubArea> findAssociatedSubAreas(Long id) {
+		FixedArea fixedArea = new FixedArea();
+		fixedArea.setId(id);
+		return subAreaRepository.findByFixedArea(fixedArea);
+	}
+
+
+	
+
+
 
 
 

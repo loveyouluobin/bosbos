@@ -33,23 +33,7 @@ public class CustomerServiceImpl implements CustomerService {
         return customerRepository.findByFixedAreaId(fixedAreaId);
     }
 
-    @Override
-    public void assignCustomers2FixedArea(Long[] customerIds,
-            String fixedAreaId) {
-
-        // 根据定区ID,把关联到这个定区的所有客户全部解绑
-        if (StringUtils.isNotEmpty(fixedAreaId)) {
-            customerRepository.unbindCustomerByFixedArea(fixedAreaId);
-        }
-
-        // 要关联的数据和定区Id进行绑定
-        if (customerIds != null && fixedAreaId.length() > 0) {
-            for (Long customerId : customerIds) {
-                customerRepository.bindCustomer2FixedArea(customerId,
-                        fixedAreaId);
-            }
-        }
-    }
+  
 
 	@Override
 	public void save(Customer customer) {
@@ -73,4 +57,16 @@ public class CustomerServiceImpl implements CustomerService {
         return customerRepository.findByTelephoneAndPassword(telephone,
                 password);
     }
+
+	@Override//先全部解绑 再把右边的进行关联
+	public void assignCustomers2FixedArea(Long[] customerIds, String fixedAreaId) {
+		if (StringUtils.isNotEmpty(fixedAreaId) ) {//如果传过来的定区id不为空
+			customerRepository.unbindCustomerByFixedArea(fixedAreaId);//就解绑所有关联这个定区的所有 客户
+		}
+		if (customerIds!=null&&fixedAreaId.length()>0) {//如果客户数组不为Null并且长度大于0(有数据)
+			for (Long customerId : customerIds) {//遍历客户
+				customerRepository.bindCustomer2FixedArea(customerId, fixedAreaId);//要关联客户和定区关联
+			}
+		}
+	}
 }
