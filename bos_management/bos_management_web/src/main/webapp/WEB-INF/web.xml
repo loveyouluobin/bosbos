@@ -27,5 +27,13 @@
 		<filter-name>struts</filter-name>
 		<url-pattern>*.action</url-pattern>
 	</filter-mapping>
-
+<servlet>
+		<servlet-name>cxf</servlet-name>
+		<servlet-class>org.apache.cxf.transport.servlet.CXFServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>cxf</servlet-name>
+		<!-- 如果struts拦截的规则是/*，一定要做修改，否则两个框架会起冲突 -->
+		<url-pattern>/webService/*</url-pattern>
+	</servlet-mapping>
 </web-app>

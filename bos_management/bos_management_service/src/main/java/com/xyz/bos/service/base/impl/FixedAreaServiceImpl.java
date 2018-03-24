@@ -1,5 +1,7 @@
 package com.xyz.bos.service.base.impl;
 
+import java.util.Set;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -8,9 +10,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.xyz.bos.dao.base.CourierRepository;
 import com.xyz.bos.dao.base.FixedAreaRepository;
+import com.xyz.bos.dao.base.SubAreaRepository;
 import com.xyz.bos.dao.base.TakeTimeRepository;
 import com.xyz.bos.domain.base.Courier;
 import com.xyz.bos.domain.base.FixedArea;
+import com.xyz.bos.domain.base.SubArea;
 import com.xyz.bos.domain.base.TakeTime;
 import com.xyz.bos.service.base.FixedAreaService;
 @Service
@@ -40,6 +44,21 @@ public class FixedAreaServiceImpl implements FixedAreaService {
 		courier.setTakeTime(takeTime);//建立快递员和时间关联 把快递员里面的时间字段设置进去
 		//courier.getFixedAreas().add(fixedArea);//把快递员中的定区增加到 定区 courier实体类这个字段放弃维护
 		fixedArea.getCouriers().add(courier);//用定区里的快递员 加到快递员里
+	}
+	
+	@Autowired//注入分区的dao接口
+	private SubAreaRepository subAreaRepository;
+	@Override//关联分区到指定 的定区
+	public void assignSubAreas2FixedArea(Long fixedAreaId, long[] subAreaIds) {
+		FixedArea fixedArea = fixedAreaRepository.findOne(fixedAreaId);//以id查这个定区
+		Set<SubArea> subareas = fixedArea.getSubareas();//获得当前定区所有分区 
+		for (SubArea subArea : subareas) {//遍历
+			subArea.setFixedArea(null);//全部解绑
+		}
+		for (Long subAreaId : subAreaIds) {//遍历选择右边的分区 绑定到定区
+			SubArea subArea = subAreaRepository.findOne(subAreaId);//以id查这个定区
+			subArea.setFixedArea(fixedArea);//以这个定区 设置进右边所有分区 
+		}
 	}
 
 }

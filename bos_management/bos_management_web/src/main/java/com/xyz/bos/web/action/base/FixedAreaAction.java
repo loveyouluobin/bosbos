@@ -100,6 +100,18 @@ private FixedAreaService fixedAreaService;
     	return SUCCESS;
     }
     
+    private long[]subAreaIds;//使用属性驱动获得前端分区的隐藏ID
+    public void setSubAreaIds(long[] subAreaIds) {
+		this.subAreaIds = subAreaIds;	}
+    // 关联分区 方法
+    @Action(value = "fixedAreaAction_assignSubAreas2FixedArea",results={
+    		@Result(location="/pages/base/fixed_area.html",name="success",type="redirect")
+    })
+    public String assignSubAreas2FixedArea() throws IOException {
+     fixedAreaService.assignSubAreas2FixedArea(getModel().getId(),subAreaIds);
+    	return SUCCESS;
+    }
+    
     private Long courierId;//属性驱动获取前端name=的值 快速员id
     private Long takeTimeId;//时段id
     public void setCourierId(Long courierId) {
