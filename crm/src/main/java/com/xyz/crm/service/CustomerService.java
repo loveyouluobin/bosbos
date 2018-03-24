@@ -53,4 +53,11 @@ public interface CustomerService {
 	    @QueryParam("customerIds")Long[]customerIds,
 	    @QueryParam("fixedAreaId")String fixedAreaId);
     
+    //根据地址查询定区ID
+    @GET    
+    @Path("/findFixedAreaIdByAdddress")
+    String findFixedAreaIdByAdddress(@QueryParam("address") String address);//传客户里填的地址过去
+    
+    
+    
 }

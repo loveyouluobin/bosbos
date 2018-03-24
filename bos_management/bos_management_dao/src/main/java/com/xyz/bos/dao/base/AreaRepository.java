@@ -18,6 +18,7 @@ public interface AreaRepository extends JpaRepository<Area, Long> {
     List<Area> findQ(String q);
 
     //标准的
-	Area findByProvinceAndDistrict(String province, String city, String district);
+
+	Area findByProvinceAndCityAndDistrict(String province, String city, String district);
 
 }

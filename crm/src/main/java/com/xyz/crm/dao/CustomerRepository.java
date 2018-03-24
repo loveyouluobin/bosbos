@@ -23,16 +23,24 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
     @Modifying
     void bindCustomer2FixedArea(Long customerId, String fixedAreaId);
     
-    //激活 更改用
-    @Query("update Customer set type=1 where telephone=?")//自定义语句
-    @Modifying//删/改操作 delete from 查询不需要加这句
 
-    void active(String telephone);//定义接口
+    // 激活
+    @Query("update Customer set type = 1 where telephone = ?")
+    @Modifying
+    void active(String telephone);
+     
+    //根据地址查询 定区ID
+    @Query("select fixedAreaId from Customer where address=?")//自定义语句
+    String findFixedAreaIdByAdddress(String address);
+    
+  
     
     // 查看用户是否激活
     Customer findByTelephone(String telephone);
 
     // 登录
     Customer findByTelephoneAndPassword(String telephone, String password);
+    
+    
 }
 

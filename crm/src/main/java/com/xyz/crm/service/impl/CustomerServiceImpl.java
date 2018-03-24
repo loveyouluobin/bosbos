@@ -69,4 +69,9 @@ public class CustomerServiceImpl implements CustomerService {
 			}
 		}
 	}
+
+	@Override
+	public String findFixedAreaIdByAdddress(String address) {
+		return customerRepository.findFixedAreaIdByAdddress(address);
+	}
 }
