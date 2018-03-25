@@ -2,6 +2,10 @@ package com.xyz.bos.fore.web.action; //包名后一定加.action
 
 import java.util.concurrent.TimeUnit;
 
+import javax.jms.JMSException;
+import javax.jms.MapMessage;
+import javax.jms.Message;
+import javax.jms.Session;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang3.RandomStringUtils;
@@ -15,6 +19,8 @@ import org.apache.struts2.convention.annotation.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.jms.core.JmsTemplate;
+import org.springframework.jms.core.MessageCreator;
 import org.springframework.stereotype.Controller;
 
 import com.aliyuncs.exceptions.ClientException;
@@ -36,12 +42,23 @@ private Customer model=new Customer();//模型驱动Customer客户实体
     public Customer getModel() {
         return model;    }
     
+    @Autowired //注入jms消息模板
+    private JmsTemplate jmsTemplate;
+    
     @Action(value="customerAction_sendSMS")//发短信的方法
     public String sendSMS() throws Exception{
-       String code = RandomStringUtils.randomNumeric(6);//随机生成6位验证码//org.apache.commons.lang3.RandomStringUtils
+       final String code = RandomStringUtils.randomNumeric(6);//随机生成6位验证码//org.apache.commons.lang3.RandomStringUtils
        ServletActionContext.getRequest().getSession().setAttribute("serverCode", code);//存到session为验证用
-       SmsUtils.sendSms(model.getTelephone(), code);//调utils类发短信 传参数 模型驱动里从前端获得的手机号和 生成的验证码
-       System.out.println(code);
+       //由消息中间件来发送手机验证码
+       jmsTemplate.send("sms",new MessageCreator() {
+		@Override
+		public Message createMessage(Session session) throws JMSException {
+			MapMessage message=session.createMapMessage();//消息map对像集合
+			message.setString("tel",model.getTelephone());//手机号
+			message.setString("code", code);//生成的验证码
+			return message;//返回消息对象
+		}
+	});
         return NONE;
     }
     

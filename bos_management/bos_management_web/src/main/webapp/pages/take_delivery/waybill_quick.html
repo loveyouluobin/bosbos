@@ -150,9 +150,15 @@
 					idField : 'id',
 					columns : columns,
 					onDblClickRow : doDblClickRow,
-					onAfterEdit : function(rowIndex, rowData, changes){
-						console.info(rowData);
-						editIndex = undefined;
+					onAfterEdit : function(rowIndex, rowData, changes){//参数1发生改变的行索引2完整行数据json格式3发生改变的数据键值对形式
+						$.post(// 把这些修改数据 提交数据到方法存数据库
+								"../../waybillAction_save.action",rowData,
+								function(data){
+							if (data=='1') {
+								$.messager.alert("警告","录入失败请检查数据","warning")
+							}
+						}
+						)
 					}
 				});
 			});
