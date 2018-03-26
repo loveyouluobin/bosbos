@@ -3,6 +3,7 @@ package com.xyz.bos.service.base.impl;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -33,7 +34,8 @@ public class CourierServiceImpl implements CourierService {
         return courierRepository.findAll(pageable);
     }
 
-    // 批量删除
+    // 快递员批量删除
+    @RequiresPermissions("batchDel")//调用时框架会检查当前用户是否有权限有放行无抛异常 需开启CGLib代理方式
     @Override
     public void batchDel(String ids) {
         // 真实开发中只有逻辑删除

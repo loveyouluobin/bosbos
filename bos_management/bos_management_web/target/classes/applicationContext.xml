@@ -14,7 +14,7 @@
 
 	<!--
 		#########################################################
-		指定连 接池配置
+		指定连接  池配置
 		#########################################################
 	-->
 	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
@@ -29,7 +29,7 @@
 		<property name="dataSource" ref="dataSource" />
 		<!--
 			#########################################################
-			指定JPA扫描的实体类所在的包
+			指定JPA扫描的实 体类所在的包
 			#########################################################
 		-->
 		<property name="packagesToScan" value="com.xyz.bos.domain" />
@@ -64,18 +64,47 @@
 		DAO包下的类要使用Spring Data JPA框架进行扫描
 		#########################################################
 	-->
-	<context:component-scan base-package="com.xyz.bos.service,com.xyz.bos.web" />
-
-	<!-- 开启事 务注解 -->
-	<tx:annotation-driven transaction-manager="transactionManager" />
 	<!--
 		#########################################################
-		指定Spring Data JPA要进行 扫描的包,该包中的类框架会自动为其创建代理
+		开启IOC注解.
+		指定Spring进行扫描的包，如果该包中的类使用了@Component @Controller@Service等注解，会把这些类注册为bean
+		！！！！不要扫描DAO ！！！！
+		DAO包下的类要使用Spring Data JPA框架进行扫描
+		#########################################################
+	-->
+	
+	<context:component-scan base-package="com.xyz.bos.service,com.xyz.bos.web" />
+
+	<!--开启事务注解里加上proxy-target-class="true"就成cglib代理了并注册两个bean
+		JDK代理方式 : 依赖根据目标对象所实现的接口,创建了一个代理对象
+		CGLib代理方式 : 创建一个目标对象的子类
+		proxy-target-class:true,使用cglib代理
+		proxy-target-class:false,使用jdk代理 -->
+	<tx:annotation-driven proxy-target-class="true" transaction-manager="transactionManager" />
+	<!-- 基于Spring的自动代理,创建Service层的实现 -->
+	<bean
+		class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator">
+		<!-- 开启cglib代理 -->
+		<property name="proxyTargetClass" value="true"></property>
+	</bean>
+	<!--
+		配置切面= 切点(向那里插入代码)+通知 (要插入的代码)
+	-->
+	<bean
+		class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">
+		<!-- 注入安全管理器 -->
+		<property name="securityManager" ref="securityManager"></property>
+	</bean>
+	
+	
+	<!--
+		#########################################################
+		指定S pring DataJPA要进行 扫描的包,该包中的类框架会自动为其创建代理
 		#########################################################
 	-->
 	<jpa:repositories base-package="com.xyz.bos.dao" />
 
-<!--发布订单的WebService -->
+<!--发布订单的 WebService -->
 	<jaxrs:server address="/orderService">
 		<jaxrs:serviceBeans>
 			<ref bean="orderServiceImpl" />
@@ -87,4 +116,53 @@
 			<bean class="org.apache.cxf.interceptor.LoggingOutInterceptor"></bean>
 		</jaxrs:outInterceptors>
 	</jaxrs:server>
+	
+<!-- 初始化shiro框架提供的过滤器 -->
+	<bean id="shiroFilterFactoryBean" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+		<!-- 注入安全管理器 -->
+		<property name="securityManager" ref="securityManager"></property>
+
+		<!-- 权限认证的页面,登录页面 -->
+		<property name="loginUrl" value="/login.html"></property>
+		<!-- 权限认证成功以后要跳转的页面 -->
+		<property name="successUrl" value="/index.html"></property>
+		<!-- 权限不足要跳转的页面
+		只对拦截器生效,不会注解方式生效
+		 -->
+		<property name="unauthorizedUrl" value="/unauthorizedUrl.html"></property>
+		<!--指定拦截的规则 -->
+		<property name="filterChainDefinitions">
+			<!--
+				认证:
+				authc:框架提供的过滤器,有权限就放行,没有权限就拦截
+				anon:框架提供的过滤器,可以匿名访问
+				
+				授权:
+				perms:框架提供的过滤器,用户请求资源的时候,会去检查用户是否拥有对应的权限,如果有就放行,没有,跳转到unauthorizedUrl属性指定的页面
+				
+				拦截的规则执行的时候是从上往下执行的,一旦有一个规则匹配成功,后面的规则就不再执行了
+				拦截的规则不可以折行
+			-->
+			<value>
+
+				/css/* = anon
+				/data/* = anon
+				/images/* = anon
+				/js/** = anon
+				/validatecode.jsp = anon
+				/userAction_login.action = anon
+				/courierAction_pageQuery.action = perms["courierAction_pageQuery"]
+				/hi.html = perms["courierAction_pageQuery"]
+				/** = authc
+			</value>
+		</property>
+	</bean>
+
+	<!-- 注册安全管理器 -->
+	<bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+		<!-- 注入realm -->
+		<property name="realm" ref="userRealm"></property>
+	</bean>
+
+	
 </beans>

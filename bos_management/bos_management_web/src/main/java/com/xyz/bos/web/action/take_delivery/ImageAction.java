@@ -44,7 +44,8 @@ public String upload() throws IOException{
 		ServletContext servletContext = ServletActionContext.getServletContext();//项目路径
 		String dirRealPath = servletContext.getRealPath(dirPath);//获取要保存图片的项目文件夹绝对路径
 		String suffix = imgFileFileName.substring(imgFileFileName.lastIndexOf("."));//获取文件名的后缀
-		String fileName=UUID.randomUUID().toString().replace("-", "")+suffix;//uuid生成要保存的文件名
+		//String fileName=UUID.randomUUID().toString().replace("-", "")+suffix;//uuid生成要保存的文件名
+		String fileName=new SimpleDateFormat("yyyyMMddHHmmss").format(new Date()).toString()+suffix;//当时时间保存的文件名
 		File destFile = new File(dirRealPath+"/"+fileName);//路径+/+文件名+后缀的文件对象
 		FileUtils.copyFile(imgFile, destFile);//保存文件
 		String contextPath = servletContext.getContextPath();//本项目路径
@@ -67,9 +68,7 @@ private String imgFileContentType;
 
 public void setImgFileContentType(String imgFileContentType) {
     this.imgFileContentType = imgFileContentType;
-    
 }
-
 
 
 }
