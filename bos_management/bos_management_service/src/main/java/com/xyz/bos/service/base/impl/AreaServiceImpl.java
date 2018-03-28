@@ -43,4 +43,10 @@ public class AreaServiceImpl implements AreaService {
         return areaRepository.findQ(q);
     }
 
+	@Override
+	public void save(Area model) {
+		// TODO Auto-generated method stub
+		 areaRepository.save(model);
+	}
+
 }

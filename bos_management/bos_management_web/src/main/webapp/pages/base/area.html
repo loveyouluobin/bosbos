@@ -23,12 +23,27 @@
 	type="text/javascript"></script>
 <script type="text/javascript" src="../../js/jquery.ocupload-1.1.2.js"></script>
 <script type="text/javascript">
+
+function submitDate() {
+		if ($("#areaForm").form("validate")) {//如果表单数据都输有了
+		$("#areaForm").submit();//就提交
+		}
+}
+
 	function doAdd() {
 		$('#addWindow').window("open");
 	}
 
 	function doView() {
-		alert("修改...");
+		var result=$("#grid").datagrid("getSelections")
+		if (result.length==1) {
+			$("#addWindow").window("open");
+			$("areaForm").form("load",result[0]);
+		}else{
+			$.messager.alert("提示","必须选也只能选一条修改", "info")
+		}
+ 			
+		
 	}
 
 	function doDelete() {
@@ -37,10 +52,18 @@
 
 	//工具栏
 	var toolbar = [ {
-		id : 'button-edit',
+		id : 'button-edit',	
 		text : '修改',
 		iconCls : 'icon-edit',
-		handler : doView
+		handler :function(){
+		var result=$("#grid").datagrid("getSelections")//#grid是中间的div的所有选 中
+		if (result.length==1) {
+		$("#addWindow").window("open");
+		$("#areaForm").form("load",result[0]);
+		} else {
+		$.messager.alert("提示","必须选也只能选 一条修改" , "info")	
+		}
+		}
 	}, {
 		id : 'button-add',
 		text : '增加',
@@ -151,17 +174,19 @@
 		<div region="north" style="height: 31px; overflow: hidden;"
 			split="false" border="false">
 			<div class="datagrid-toolbar">
-				<a id="save" icon="icon-save" href="#" class="easyui-linkbutton"
+				<a id="save" onclick="submitDate()" icon="icon-save" href="#" class="easyui-linkbutton"
 					plain="true">保存</a>
 			</div>
 		</div>
 
 		<div region="center" style="overflow: auto; padding: 5px;"
 			border="false">
-			<form>
+			<form id="areaForm" method="post" action="../../areaAction_save.action">
 				<table class="table-edit" width="80%" align="center">
 					<tr class="title">
-						<td colspan="2">区域信息</td>
+						<td colspan="2">区域信息
+							<input type="hidden" name="id">
+						</td>
 					</tr>
 					<tr>
 						<td>省</td>

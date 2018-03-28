@@ -156,4 +156,11 @@ public class AreaAction extends CommonAction<Area> {
 
         return NONE;
     }
+    
+    @Action(value="areaAction_save",results={
+            @Result(name="success",location="/pages/base/area.html",type="redirect")        })
+    public String save(){
+        areaService.save(getModel());
+        return SUCCESS;
+    }
 }
