@@ -3,6 +3,8 @@ package com.xyz.bos.web.action.system;
 import java.io.IOException;
 import java.util.List;
 
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -15,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 
 import com.xyz.bos.domain.system.Menu;
+import com.xyz.bos.domain.system.User;
 import com.xyz.bos.service.system.MenuService;
 import com.xyz.bos.web.action.CommonAction;
 
@@ -46,6 +49,17 @@ private MenuService menuService;
 	jsonConfig.setExcludes(new String[]{"roles","childrenMenus","parentMenu"});
 	list2json(list, jsonConfig);
 	return NONE;
+	}
+	@Action(value="menuAction_findbyUser")//根据不同用户角色查询出菜单树
+	public String findbyUser() throws IOException{
+		Subject subject = SecurityUtils.getSubject();//获取当前用户权限
+		User user = (User) subject.getPrincipal();//强转为当前用户
+		List<Menu>list= menuService.findbyUser(user);//查出角色菜单
+		JsonConfig jsonConfig = new JsonConfig();
+		//忽略children不需要标准json创建菜单树 用简单json方式需要pid在user实体加get方法
+		jsonConfig.setExcludes(new String[]{"roles", "childrenMenus", "parentMenu","children"});//忽略不要转json字段
+		list2json(list, jsonConfig);
+		return NONE;
 	}
 	
 	@Action(value="menuAction_save",results={

@@ -14,7 +14,7 @@
 
 	<!--
 		#########################################################
-		指定连接  池配置
+		指定连接 池配置
 		#########################################################
 	-->
 	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
@@ -144,7 +144,6 @@
 				拦截的规则不可以折行
 			-->
 			<value>
-
 				/css/* = anon
 				/data/* = anon
 				/images/* = anon
@@ -158,11 +157,50 @@
 		</property>
 	</bean>
 
-	<!-- 注册安全管理器 -->
-	<bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
-		<!-- 注入realm -->
-		<property name="realm" ref="userRealm"></property>
-	</bean>
+<!-- 注册安全管理器 -->
+<bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+	<!-- 注入realm -->
+	<property name="realm" ref="userRealm"></property>
+	<!-- 注入缓存管理器 -->
+	<property name="cacheManager" ref="cacheManager"></property>
+</bean>
 
-	
+<!-- 注册缓存管理器 -->
+<bean id="cacheManager"
+	class="org.apache.shiro.cache.ehcache.EhCacheManager">
+	<!-- 指定配置文件的位置 -->
+	<property name="cacheManagerConfigFile" value="classpath:ehcache.xml"></property>
+</bean>
+
+
+<!-- 最后 注册任务详情,通过反射的方式调用目标类的目标方法 不需要指定哪个具体类之前已经有 -->
+<bean id="jobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+	<!-- 注入目标对象 ref指定哪个类 -->
+	<property name="targetObject" ref="workbillJob"></property>
+	<!-- 注入目标方法  value指定哪个方法-->
+	<property name="targetMethod" value="sendMail"></property>
+</bean>
+<!-- 注册触发器,可以理解为这是一个闹钟 -->
+<bean id="emailTrigger"
+	class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+	<!-- 指定触发的规则.闹钟在什么时候响起 -->
+	<property name="cronExpression">
+		<!-- 每隔五秒钟执行一次 -->
+		<value>0/10 * * * * ? 2019</value>
+	</property>
+	<!-- 注入任务详情,闹钟响起的时候要做什么事情 -->
+	<property name="jobDetail" ref="jobDetail"></property>
+</bean>
+<!--最开始 spring提供的一个工厂类任务工厂类可以简单理解为这是一台手机里有闹钟-->
+<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+	<!--注入触发器可以简单理解为闹钟的集合-->
+	<property name="triggers">
+		<!-- 指定具体的触发器,可以简单理解为具体的一个闹钟 -->
+		<list>
+			<ref bean="emailTrigger" />
+		</list>
+	</property>
+</bean>
+
+
 </beans>

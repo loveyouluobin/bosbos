@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.xyz.bos.dao.system.MenuRepository;
 import com.xyz.bos.domain.system.Menu;
+import com.xyz.bos.domain.system.User;
 import com.xyz.bos.service.system.MenuService;
 @Service
 @Transactional
@@ -34,6 +35,14 @@ public void save(Menu model) {
 	}
 	menuRepository.save(model);
 	
+}
+
+@Override
+public List<Menu> findbyUser(User user) {
+	if ("admin".equals(user.getUsername())) {//如果登陆的是admin
+		return menuRepository.findAll();//返回全部权限
+	}
+	return menuRepository.findbyUser(user.getId());//是其它用户根据id查
 }
 
 

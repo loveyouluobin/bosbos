@@ -1,5 +1,6 @@
 package com.xyz.bos.domain.system;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -19,7 +20,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "T_MENU")
-public class Menu {
+public class Menu implements Serializable {
     @Id
     @GeneratedValue
     @Column(name = "C_ID")
@@ -44,6 +45,14 @@ public class Menu {
     private Menu parentMenu;
 
     
+    public Long getpId() {//ztree简单json 需要的是pId父菜单
+        if (parentMenu == null) { // 如果父菜单等于空
+            return 0L;//返回long 0 就是根菜单
+        }
+        return parentMenu.getId();//返回父菜单的id/父菜单PId
+    }
+    
+    
     public String getText() {
         return name;
     }
@@ -52,7 +61,7 @@ public class Menu {
         return childrenMenus;
     }
     
-    
+  
     
     
     public Long getId() {

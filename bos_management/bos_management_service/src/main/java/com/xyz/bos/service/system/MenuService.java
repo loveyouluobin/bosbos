@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import com.xyz.bos.domain.system.Menu;
+import com.xyz.bos.domain.system.User;
 
 public interface MenuService {
 
@@ -14,6 +15,8 @@ public interface MenuService {
 	List<Menu> findLevelOne();
 
 	void save(Menu model);
+
+	List<Menu> findbyUser(User user);
 
 
 
